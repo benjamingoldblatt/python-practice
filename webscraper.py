@@ -9,5 +9,11 @@ results = soup.find(id="ResultsContainer")
 
 job_elements = results.find_all("div", class_="card-content")
 
+i = 1; 
 for job_element in job_elements:
-    print(job_element, end="\n"*2)
+    title_element = job_element.find("h2", class_="title")
+    company_element = job_element.find("h3", class_="subtitle")
+    location_element = job_element.find("p", class_="location")
+    print(i + title_element.text)
+    print(company_element.text)
+    print(location_element.text)
