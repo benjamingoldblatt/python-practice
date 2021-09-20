@@ -1,19 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 
-URL = "https://realpython.github.io/fake-jobs/"
+URL = "https://www.goodreads.com/shelf/show/philosophy"
 page = requests.get(URL)
 
 soup = BeautifulSoup(page.content, "html.parser")
-results = soup.find(id="ResultsContainer")
 
-job_elements = results.find_all("div", class_="card-content")
+titles = soup.findAll(class_="bookTitle")
+authors = soup.findAll(class_="authorName")
 
-i = 1; 
-for job_element in job_elements:
-    title_element = job_element.find("h2", class_="title")
-    company_element = job_element.find("h3", class_="subtitle")
-    location_element = job_element.find("p", class_="location")
-    print(i + title_element.text)
-    print(company_element.text)
-    print(location_element.text)
+
+for title in titles:
+    print(title.text)
+
+for author in authors:
+    print(author.text)
