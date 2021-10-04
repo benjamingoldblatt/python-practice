@@ -11,9 +11,12 @@ HOME = "https://www.goodreads.com"
 genres = []
 page = requests.get(HOME)
 soup = BeautifulSoup(page.content, "html.parser")
-gs = soup.findAll(class_="gr-hyperlink")
-for g in gs:
-    genres.append(g.text)
+cols = soup.find_all(class_="left")
+for col in cols:
+    gres = col.find_all(class_="gr-hyperlink")
+    for gre in gres:
+        genres.append(gre.text)
+print(genres)
 
 books = []
 data = {"genre":[], "title": [], "author": [], "rating": [], "reviews": [], "year": []}
@@ -51,4 +54,4 @@ for genre in genres:
 
 df = pd.DataFrame(data)
 
-print(df)
+df.to_csv('goodreads.csv', index=False)
