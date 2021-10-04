@@ -16,11 +16,9 @@ for g in gs:
     genres.append(g.text)
 
 books = []
-data = {"title": [], "author": [], "rating": [], "reviews": [], "year": []}
+data = {"genre":[], "title": [], "author": [], "rating": [], "reviews": [], "year": []}
 a = 1
 for genre in genres:
-    if (a > 200):
-        break
     page = requests.get(URL + "/" + genre)
     soup = BeautifulSoup(page.content, "html.parser")
     books = soup.findAll(class_="left")
@@ -43,6 +41,7 @@ for genre in genres:
 
         numbers[0] = numbers[0]/100
         if (len(numbers) == 3):
+            data["genre"].append(genre)
             data["title"].append(title.text)
             data["author"].append(author.text)
             data["rating"].append(numbers[0])
