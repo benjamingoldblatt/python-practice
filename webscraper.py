@@ -3,6 +3,7 @@ import numpy as np
 from bs4 import BeautifulSoup
 import requests
 
+
 URL = "https://www.goodreads.com/shelf/show"
 num = 1
 
