@@ -44,12 +44,13 @@ for genre in genres:
 
         numbers[0] = numbers[0]/100
         if (len(numbers) == 3):
-            data["genre"].append(genre)
-            data["title"].append(title.text)
-            data["author"].append(author.text)
-            data["rating"].append(numbers[0])
-            data["reviews"].append(numbers[1])
-            data["year"].append(numbers[2])
+            if title.text not in data["title"]:
+                data["genre"].append(genre)
+                data["title"].append(title.text)
+                data["author"].append(author.text)
+                data["rating"].append(numbers[0])
+                data["reviews"].append(numbers[1])
+                data["year"].append(numbers[2])
         a = a + 1   
 
 df = pd.DataFrame(data)
