@@ -13,7 +13,7 @@ reqs = (grequests.get(link) for link in books)
 resp=grequests.imap(reqs, grequests.Pool(10))
 
 
-data = {"genres":[], "title": [], "authors": [], "rating": [], "reviews": [], "year": [], "description":[], "pages": []}
+data = {"genres":[], "title": [], "authors": [], "rating": [], "reviews": [], "description":[], "pages": []}
 for r in resp:
     soup = BeautifulSoup(r.text, "lxml")
     title = soup.find(id="bookTitle")
@@ -28,18 +28,18 @@ for r in resp:
     rating = soup.find('span',attrs={"itemprop":"ratingValue"})
     pgs = soup.find('span',attrs={"itemprop":"numberOfPages"})
     numratings = soup.find("a", href="#other_reviews")
-    description = soup.find(id_='freeTextContainer',attrs={"itemprop":"ratingValue"})
+    description = soup.find(class_='readable stacked')
+    if (description):
+        description = description.find("span")
 
-    if title and genre and rating and authors and numratings and pgs:
+    if title and genre and rating and authors and numratings and pgs and description:
         data["authors"].append(names)
         data["title"].append(title.text.strip())
         data["pages"].append(re.sub("[^0-9]", "", pgs.text))
         data["genres"].append(genrs)
         data["rating"].append(rating.text.strip())
+        data["description"].append(description.text.strip())
         data["reviews"].append(re.sub("[^0-9]", "", numratings.text))
-    print(1)
-    print(data)
 
-print(len(data["rating"]))
-
-
+df = pd.DataFrame(data)
+df.to_csv('bestbooksdescr.csv', index=False)
