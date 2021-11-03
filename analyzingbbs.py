@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import grequests
+import re
 from bs4 import BeautifulSoup
 import csv
 
@@ -9,27 +10,36 @@ books = df['0'].tolist()
 
 
 reqs = (grequests.get(link) for link in books)
-resp = grequests.map(reqs, size=10)
+resp=grequests.imap(reqs, grequests.Pool(10))
 
-data = {"genre":[], "title": [], "author": [], "rating": [], "reviews": [], "year": [], "description":[], "pages": []}
+
+data = {"genres":[], "title": [], "authors": [], "rating": [], "reviews": [], "year": [], "description":[], "pages": []}
 for r in resp:
-    soup = BeautifulSoup(r.content, "html.parser")
+    soup = BeautifulSoup(r.text, "lxml")
     title = soup.find(id="bookTitle")
     names = []
+    genrs = []
     authors = soup.findAll(class_="authorName")
     for auth in authors:
         names.append(auth.text)
-    print(names)
-    genre = soup.find(class_="actionLinkLite bookPageGenreLink")
+    genres = soup.find_all(class_="actionLinkLite bookPageGenreLink", limit=2)
+    for genre in genres:
+        genrs.append(genre.text)
     rating = soup.find('span',attrs={"itemprop":"ratingValue"})
-    reviews = soup.find('span',attrs={"itemprop":"ratingCount"})
-    if title and genre and rating and authors:
+    pgs = soup.find('span',attrs={"itemprop":"numberOfPages"})
+    numratings = soup.find("a", href="#other_reviews")
+    description = soup.find(id_='freeTextContainer',attrs={"itemprop":"ratingValue"})
+
+    if title and genre and rating and authors and numratings and pgs:
         data["authors"].append(names)
         data["title"].append(title.text.strip())
-        data["genre"].append(genre.text)
+        data["pages"].append(re.sub("[^0-9]", "", pgs.text))
+        data["genres"].append(genrs)
         data["rating"].append(rating.text.strip())
-        data["reviews"].append(rating.text.strip())
+        data["reviews"].append(re.sub("[^0-9]", "", numratings.text))
+    print(1)
     print(data)
+
 print(len(data["rating"]))
 
 
