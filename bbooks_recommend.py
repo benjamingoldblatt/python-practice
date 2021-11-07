@@ -17,5 +17,9 @@ def recommend(title, cosine_sim = cosine_sim):
         recommended_movies.append(list(df['title'])[i])
         
     return recommended_movies
-book = "Divergent"
-print(recommend(book))
+book = "The Chronicles of Narnia"
+list = recommend(book)
+count = 1
+for book in list:
+    print(str(count) + ". " + book)
+    count+=1
